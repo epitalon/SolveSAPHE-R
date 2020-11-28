@@ -1,0 +1,3 @@
+importFrom(utils, data)
+# Export main function
+export("solve_at_general")
