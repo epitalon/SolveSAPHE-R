@@ -1,3 +1,3 @@
 importFrom(utils, data)
 # Export main function
-export("solve_at_general")
+export("solve_pH_from_AT")
