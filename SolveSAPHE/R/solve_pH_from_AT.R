@@ -1,7 +1,7 @@
 #===============================================================================
 solve_pH_from_AT <- function (p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot, 
                               p_nh4tot, p_h2stot, p_so4tot, p_flutot, p_pHscale,
-                              p_askVal=FALSE, p_dissoc, p_hini)
+                              p_askVal=FALSE, p_dissoc, p_temp=18, p_sal=35, p_pres=0, p_hini)
 #===============================================================================
 {
     # Determines [H+] from Total alkalinity and dissolved total elements in sea water. 
@@ -10,6 +10,8 @@ solve_pH_from_AT <- function (p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot,
 
     # constant threshold
     pz_exp_threshold = 1.0
+    pz_exp_upperlim  = 4.6 # ~ ln(100)
+
     # Maximum number of iterations
     jp_maxniter_atgen    = 50
     # stopping criterion = tolerance on relative change of [H+]
@@ -19,7 +21,7 @@ solve_pH_from_AT <- function (p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot,
 
 
     if (missing (p_dissoc)) {
-    
+        p_dissoc <- compute_dissoc_constants (p_temp, p_sal, p_pres, p_pHscale)
     } else {
     
         api = list()
@@ -171,47 +173,26 @@ solve_pH_from_AT <- function (p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot,
 
             zh_lnfactor = -zeqn/(zdeqndh*zh_prev)
 
-            if (abs(zh_lnfactor) > pz_exp_threshold) {
-                zh          = zh_prev*exp(zh_lnfactor)
-            } else {
+            if (abs(zh_lnfactor) < pz_exp_threshold) {
                 zh_delta    = zh_lnfactor*zh_prev
                 zh          = zh_prev + zh_delta
+            } else if (abs(zh_lnfactor) < pz_exp_upperlim) {
+                zh          = zh_prev*exp(zh_lnfactor)
+            } else {
+                zh_lnfactor = pz_exp_upperlim * sign(zh_lnfactor)
+                zh          = zh_prev*exp(zh_lnfactor)
             }
 
             if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
                 print (c('[solve_pH_from_AT] testing zh :', zh, zeqn, zh_lnfactor))
 
 
-            if ( zh < zh_min ) {
-                # if [H]_new < [H]_min
-                # i.e., if ph_new > ph_max then
-                # take one bisection step on [ph_prev, ph_max]
-                # ph_new = (ph_prev + ph_max)/2d0
-                # In terms of [H]_new:
-                # [H]_new = 10^(-ph_new)
-                #         = 10^(-(ph_prev + ph_max)/2d0)
-                #         = sqrt(10^(-(ph_prev + phmax)))
-                #         = sqrt([H]_old*10^(-ph_max))
-                #         = sqrt([H]_old * zh_min)
+            if ( ( zh < zh_min ) || ( zh > zh_max ) ) {
+              # if [H]_new < [H]_min, i.e., if ph_new > ph_max,
+              # or [H]_new > [H]_max, i.e., if ph_new < ph_min,
+              # take one bisection step on [ph_min, ph_max]
 
-                zh                = sqrt(zh_prev * zh_min)
-
-                zh_lnfactor       = (zh - zh_prev)/zh_prev # Required to test convergence below
-            }
-
-            if ( zh > zh_max ) {
-                # if [H]_new > [H]_max
-                # i.e., if ph_new < ph_min, then
-                # take one bisection step on [ph_min, ph_prev]
-                # ph_new = (ph_prev + ph_min)/2d0
-                # In terms of [H]_new:
-                # [H]_new = 10^(-ph_new)
-                #         = 10^(-(ph_prev + ph_min)/2d0)
-                #         = sqrt(10^(-(ph_prev + ph_min)))
-                #         = sqrt([H]_old*10^(-ph_min))
-                #         = sqrt([H]_old * zhmax)
-
-                zh                = sqrt(zh_prev * zh_max)
+                zh                = sqrt(zh_max * zh_min)
 
                 zh_lnfactor       = (zh - zh_prev)/zh_prev # Required to test convergence below
             }

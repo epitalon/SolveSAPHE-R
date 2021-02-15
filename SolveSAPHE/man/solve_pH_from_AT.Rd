@@ -7,7 +7,7 @@
 Raphson iterations}
 \usage{solve_pH_from_AT(p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot, 
                  p_nh4tot, p_h2stot, p_so4tot, p_flutot, 
-                 p_pHscale, p_askVal=FALSE, p_dissoc, p_hini)}
+                 p_pHscale, p_askVal=FALSE, p_dissoc, p_temp, p_sal, p_pres, p_hini)}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 	\item{p_alktot}{Total alkalinity (mol/kg)}
@@ -51,10 +51,27 @@ Note that all dissociation constants shall be expressed in chosen pH scale excep
 
 If not given, these constants will be calculated.}
 
+	\item{p_temp}{Temperature in degree Celsius, to compute dissociation constants when p_dissoc is not given}
+	\item{p_sal}{Salinity, in pratical salinty unit (psu), to compute dissociation constants when p_dissoc is not given}
+	\item{p_pres}{Pressure, in bars, to compute dissociation constants when p_dissoc is not given}
 	\item{p_hini}{Optional initial value of [H+] concentration}
 }
 
-\details{TODO: detail here which formulations used when calculating dissociation constants.
+\details{Formulations used when calculating dissociation constants:
+  \itemize{
+    \item{Carbonate if Total pH scale: }{Luecker et al. (2000) -- also Handbook (2007)}
+    \item{Carbonate if SWS or Free pH scale: }{Millero et al. (1995) -- also Handbook (2007)}
+    \item{Boric acid: }{Dickson (1990, eq. 2  3) -- also Handbook (2007, eq. 37)}
+    \item{Phosphoric acid: }{Yao and Millero (1995)}
+    \item{Silicic acid: }{Yao and Millero (1995) cited by Millero (1995)}
+    \item{Ammonium: }{Yao and Millero (1995)}
+    \item{Hydrogen sulfide: }{Millero et al. (1988) (cited by Millero (1995)}
+    \item{Hydrogen sulfate: }{Dickson (1990) -- also Handbook (2007)}
+    \item{Fluoric acid if Total pH scale: }{Perez and Fraga (1987)}
+    \item{Fluoric acid if SWS or Free pH scale: }{Dickson and Riley (1979)}
+    \item{Water: }{Millero (1995)}
+  }
+
 
 The arguments can be given as a unique number or as vectors. If the lengths of the vectors are different, the longer vector is retained and only the first value of the other vectors is used. It is recommended to use either vectors with the same dimension or one vector for one argument and numbers for the other arguments.
 }
@@ -62,16 +79,18 @@ The arguments can be given as a unique number or as vectors. If the lengths of t
 \value{
   \itemize{
     \item If you set p_askVal to TRUE, the function returns a data frame containing the following columns:
-      \item{zh}{[H+] concentration value in the chosen pH scale}
-      \item{val}{Error on total alkalinity, that is the deviation between total alkalinity calculated from [H+] and given total alkalinity}
+
+    zh    :    [H+] concentration value in the chosen pH scale
+
+    val   :    Error on total alkalinity, that is the deviation between total alkalinity calculated from [H+] and given total alkalinity
 
     \item If you set p_askVal to FALSE (default), the function returns only [H+] concentration value in the chosen pH scale.
   }
 }
 
 \references{
-Munhoven G. Munhoven G. (2013) Mathematics of the total alkalinity-pH equation – pathway
-to robust and universal solution algorithms: the SolveSAPHE package v1.0.1. \emph{Geoscientif. Model Dev.} /bold{6}, 1367–1388
+Munhoven G. Munhoven G. (2013) Mathematics of the total alkalinity-pH equation - pathway
+to robust and universal solution algorithms: the SolveSAPHE package v1.0.1. \emph{Geoscientif. Model Dev.}, 1367-1388
 }
 
 \author{

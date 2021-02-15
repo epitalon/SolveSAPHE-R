@@ -1,6 +1,6 @@
-.Rcheck/
+SolveSAPHE.Rcheck/
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-.tar.gz
+/*.tar.gz
