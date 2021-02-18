@@ -6,12 +6,14 @@
 \description{Determines [H+] from Total alkalinity and dissolved total elements in sea water. Universal and robust algorithm from Munhoven (2013) with Newton-
 Raphson iterations}
 \usage{solve_pH_from_AT(p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot, 
-                 p_nh4tot, p_h2stot, p_so4tot, p_flutot, 
-                 p_pHscale, p_askVal=FALSE, p_dissoc, p_temp, p_sal, p_pres, p_hini)}
+                 p_nh4tot, p_h2stot, p_so4tot, p_flutot, p_pHscale, p_dicsel,
+                 p_askVal=FALSE, p_dissoc, p_temp, p_sal, p_pres, p_hini)}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 	\item{p_alktot}{Total alkalinity (mol/kg)}
-	\item{p_dictot}{Dissolved Inorganic Carbon (mol/kg)}
+	\item{p_dicvar}{Value of a carbonate system related variable : DIC, [CO2*], [HCO3-] or [CO3--] (mol/kg)
+	
+See below parameter p_dicsel}
 	\item{p_bortot}{Total boron concentration (mol/kg)}
 	\item{p_po4tot}{Total phosphate concentration (mol/kg)}
 	\item{p_siltot}{Total silicate concentration (mol/kg)}
@@ -20,6 +22,16 @@ Raphson iterations}
 	\item{p_so4tot}{Total sulphate concentration (mol/kg)}
 	\item{p_flutot}{Total fluor concentration (mol/kg)}
 	\item{p_pHscale}{Chosen pH scale: "T" for the total scale, "F" for the free scale and "SWS" for using the seawater scale}
+	\item{p_dicsel}{Carbonate variable selector (default = DIC). See parameter p_dicvar above. Values are:
+	
+"DIC"   :   p_dicvar = DIC (Dissolved Inorganic Carbon)
+
+"CO2"   :   p_dicvar = [CO2*]
+
+"HCO3"  :   p_dicvar = [HCO3-]
+
+"CO3"   :   p_dicvar = [CO3--]}
+
 	\item{p_askVal}{Optional boolean - set to TRUE if you want this function to return error on alkalinity, along with [H+] concentration value. Default is FALSE}
 	\item{p_dissoc}{Named list of all dissociation constants (optional). Member names are :
 
@@ -54,7 +66,10 @@ If not given, these constants will be calculated.}
 	\item{p_temp}{Temperature in degree Celsius, to compute dissociation constants when p_dissoc is not given}
 	\item{p_sal}{Salinity, in pratical salinty unit (psu), to compute dissociation constants when p_dissoc is not given}
 	\item{p_pres}{Pressure, in bars, to compute dissociation constants when p_dissoc is not given}
-	\item{p_hini}{Optional initial value of [H+] concentration}
+	\item{p_hini}{Optional initial value of [H+] concentration
+	
+If p_dicsel = "CO3", a vector of two initial values are expected since there may be two solutions for pH.
+Else, one initial value is expected}
 }
 
 \details{Formulations used when calculating dissociation constants:
@@ -72,19 +87,19 @@ If not given, these constants will be calculated.}
     \item{Water: }{Millero (1995)}
   }
 
-
-The arguments can be given as a unique number or as vectors. If the lengths of the vectors are different, the longer vector is retained and only the first value of the other vectors is used. It is recommended to use either vectors with the same dimension or one vector for one argument and numbers for the other arguments.
+This function does not support vectors as arguments, only scalar values.
 }
 
-\value{
+\value{If p_dicsel is "CO3", there may be one or two solutions for [H+], else there is only one. In case there are two solutions, both are returned.
   \itemize{
     \item If you set p_askVal to TRUE, the function returns a data frame containing the following columns:
 
-    zh    :    [H+] concentration value in the chosen pH scale
+    zh    :    [H+] concentration value(s) in the chosen pH scale
 
-    val   :    Error on total alkalinity, that is the deviation between total alkalinity calculated from [H+] and given total alkalinity
+    val   :    Error(s) on total alkalinity, that is the deviation between total alkalinity calculated from [H+] and given total alkalinity
 
-    \item If you set p_askVal to FALSE (default), the function returns only [H+] concentration value in the chosen pH scale.
+    \item If you set p_askVal to FALSE (default), the function returns only [H+] concentration value(s) in the chosen pH scale.
+    
   }
 }
 
@@ -99,7 +114,7 @@ Guy Munhoven and Jean-Marie Epitalon
 
 \examples{
 
-## With a couple of variables, on total pH scale
+## Compute [H+] from Alkalinity total and DIC, on total pH scale
 p_dissoc <- list()
 p_dissoc$K1_DIC <- 1.421828e-06
 p_dissoc$K2_DIC <- 1.081555e-09
@@ -113,16 +128,22 @@ p_dissoc$K_H2S  <- 3.087264e-07
 p_dissoc$K_HSO4 <- 0.1003021    # on free scale
 p_dissoc$K_HF   <- 0.00176441   # on free scale
 p_dissoc$K_H2O  <- 5.97496e-14
-solve_pH_from_AT(p_alktot=2.5e-3, p_dictot=2e-3, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
+solve_pH_from_AT(p_alktot=2.5e-3, p_dicvar=2e-3, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
                  p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, p_pHscale="T",
-                 p_dissoc=p_dissoc)
+                 p_dicsel="DIC", p_dissoc=p_dissoc)
 
 ## Giving inital [H+] value and asking for final error on alkalinity, on seawater pH scale
-solve_pH_from_AT(p_alktot=0.00234, p_dictot=0.001936461, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
+result <- solve_pH_from_AT(p_alktot=0.00234, p_dicvar=0.001936461, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
                  p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, p_pHscale="SWS",
-                 p_dissoc=p_dissoc, p_askVal=TRUE, p_hini=1.e-8)
+                 p_dicsel="DIC", p_dissoc=p_dissoc, p_askVal=TRUE, p_hini=1.e-8)
+H <- result$zh
+error <- result$val
 
-
-## Using vectors as arguments
+## Compute [H+] from Alkalinity total and CO3, on total free scale
+H <- solve_pH_from_AT(p_alktot=0.00240, p_dicvar=2.775481e-04, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
+                 p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, p_pHscale="F",
+                 p_dicsel="CO3", FALSE, p_dissoc=p_dissoc)
+H1 <- H[1]
+if (H[2] != 1) print ( c("Second solution : ", H[2]))
 }
 \keyword{utilities}

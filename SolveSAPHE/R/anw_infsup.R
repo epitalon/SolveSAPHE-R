@@ -1,14 +1,16 @@
 #===============================================================================
-nw_infsup <- function (p_dictot, p_bortot,
-                       p_po4tot, p_siltot,  p_nh4tot, p_h2stot,
-                       p_so4tot, p_flutot)
+anw_infsup <- function (p_dictot, p_bortot,
+                       p_po4tot, p_siltot, p_nh4tot, p_h2stot,
+                       p_so4tot, p_flutot, p_api=0)
 #===============================================================================
 {
     # Subroutine returns the lower and upper bounds of "non-water-selfionization"
     # contributions to total alkalinity (the infimum and the supremum), i.e
     # inf(TA - [OH-] + [H+]) and sup(TA - [OH-] + [H+])
 
-
+    # Input :
+    # p_api    :  PI factors of dissociation constants
+    
     # alknw_inf = -\Sum_i m_i Xtot_i
 
     # alknw_inf =-p_dictot*0._wp &          # n = 2, m = 0
@@ -38,7 +40,19 @@ nw_infsup <- function (p_dictot, p_bortot,
                   p_po4tot + p_po4tot + p_siltot +
                   p_nh4tot + p_h2stot
 
-    return (c(alknw_inf, alknw_sup))
+    if (! missing(p_api)) 
+    {
+        alknw_asympt_coeff = p_dictot * p_api$api1_dic + p_bortot * p_api$api1_bor +
+                    p_po4tot * p_api$api1_po4 + p_siltot * p_api$api1_sil +
+                    p_nh4tot * p_api$api1_nh4 + p_h2stot * p_api$api1_h2s +
+                    p_so4tot * p_api$api1_so4 + p_flutot * p_api$api1_flu
+    }
+    else 
+    {
+        alknw_asympt_coeff = 0
+    }
+
+    return (c(alknw_inf, alknw_sup, alknw_asympt_coeff))
 }
 
 
