@@ -1,3 +1,4 @@
 importFrom(utils, data)
+importFrom("stats", "optimize")
 # Export main function
 export("solve_pH_from_AT")

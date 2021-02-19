@@ -1,14 +1,15 @@
 Package: SolveSAPHE
 Title: SOLVEr Suite for Alkalinity-PH Equations
 Version: 2.0.0
-Date: 2020-10-30
+Date: 2021-02-19
 LazyData: true
 Authors@R: c(person("Jean-Marie", "Epitalon", role = c("aut", "cre", "cph"), email = "jean-marie.epitalon@orange.fr"),
   person("Jean-Pierre", "Gattuso", role = c("cph"), email = "gattuso@obs-vlfr.fr"),
   person("Guy", "Munhoven", role = "aut", email = "Guy.Munhoven@ulg.ac.be")
   )
 Depends: R (>= 2.10)
-Description: universal and robust algorithm for solving the total alkalinity-pH equation presented in Munhoven (2013).
+Imports: stats
+Description: Universal and robust algorithm for solving the total alkalinity-pH equation presented in Munhoven (2013). The total alkalinity-pH equation relates total alkalinity and pH for a given set of acid-base concentrations in a given water sample, among which carbonic acid. This package is particularly useful in marine chemistry involving dissolved inorganic carbon.
 Encoding: UTF-8
 URL: https://CRAN.R-project.org/package=SolveSAPHE
 License: GPL (>= 2)

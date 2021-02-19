@@ -1,4 +1,6 @@
 
+# General option for Debugging
+DEBUG_PHSOLVERS = FALSE
 
 #===============================================================================
 solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot, 
@@ -138,7 +140,7 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
     k_nroots = result$k_nroots
 
 
-    if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
+    if (DEBUG_PHSOLVERS)
     {
         print (c('[solve_pH_from_AT] n_roots  :', k_nroots))
         print (c('[solve_pH_from_AT] h_inf(:) :', zh_inf))
@@ -321,7 +323,7 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
 
             if (abs(zeqn_absmin) > abs(zeqn)) 
             {
-                if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
+                if (DEBUG_PHSOLVERS)
                 {
                     print (c('[solve_pH_from_AT] adjusting absmin     :', zh_prev, zeqn))
                 }

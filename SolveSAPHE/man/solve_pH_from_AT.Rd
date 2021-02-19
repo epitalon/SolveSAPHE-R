@@ -5,9 +5,9 @@
 \title{Solver for the total alkalinity-pH equations}
 \description{Determines [H+] from Total alkalinity and dissolved total elements in sea water. Universal and robust algorithm from Munhoven (2013) with Newton-
 Raphson iterations}
-\usage{solve_pH_from_AT(p_alktot, p_dictot, p_bortot, p_po4tot, p_siltot, 
+\usage{solve_pH_from_AT(p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot, 
                  p_nh4tot, p_h2stot, p_so4tot, p_flutot, p_pHscale, p_dicsel,
-                 p_askVal=FALSE, p_dissoc, p_temp, p_sal, p_pres, p_hini)}
+                 p_askVal=FALSE, p_dissoc, p_temp=18, p_sal=35, p_pres=0, p_hini)}
 %- maybe also 'usage' for other objects documented here.
 \arguments{
 	\item{p_alktot}{Total alkalinity (mol/kg)}
@@ -133,16 +133,16 @@ solve_pH_from_AT(p_alktot=2.5e-3, p_dicvar=2e-3, p_bortot=0.0004157, p_po4tot=0,
                  p_dicsel="DIC", p_dissoc=p_dissoc)
 
 ## Giving inital [H+] value and asking for final error on alkalinity, on seawater pH scale
-result <- solve_pH_from_AT(p_alktot=0.00234, p_dicvar=0.001936461, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
-                 p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, p_pHscale="SWS",
-                 p_dicsel="DIC", p_dissoc=p_dissoc, p_askVal=TRUE, p_hini=1.e-8)
+result <- solve_pH_from_AT(p_alktot=0.00234, p_dicvar=0.001936461, p_bortot=0.0004157, p_po4tot=0,
+                p_siltot=0, p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, 
+                p_pHscale="SWS",p_dicsel="DIC", p_dissoc=p_dissoc, p_askVal=TRUE, p_hini=1.e-8)
 H <- result$zh
 error <- result$val
 
 ## Compute [H+] from Alkalinity total and CO3, on total free scale
-H <- solve_pH_from_AT(p_alktot=0.00240, p_dicvar=2.775481e-04, p_bortot=0.0004157, p_po4tot=0, p_siltot=0, 
-                 p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, p_pHscale="F",
-                 p_dicsel="CO3", FALSE, p_dissoc=p_dissoc)
+H <- solve_pH_from_AT(p_alktot=0.00240, p_dicvar=2.775481e-04, p_bortot=0.0004157, p_po4tot=0,
+                p_siltot=0, p_nh4tot=0, p_h2stot=0, p_so4tot=0.0282, p_flutot=6.832e-05, 
+                p_pHscale="F", p_dicsel="CO3", FALSE, p_dissoc=p_dissoc)
 H1 <- H[1]
 if (H[2] != 1) print ( c("Second solution : ", H[2]))
 }

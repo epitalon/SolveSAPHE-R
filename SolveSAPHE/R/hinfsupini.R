@@ -1,4 +1,7 @@
 
+# General option
+SAFEGEOMEAN_INIT = FALSE
+
 # General parameters
 
 # Threshold relative difference between successive iterates
@@ -161,7 +164,7 @@ HINFSUPINI_DIC <- function (p_alktot, p_dictot, p_bortot,
     }
 
 
-    if (exists("SAFEGEOMEAN_INIT") && SAFEGEOMEAN_INIT)
+    if (SAFEGEOMEAN_INIT)
     {
         if (   (p_hini[1] == pp_hnan)          # request to calculate H_ini
             || (p_hini[1] < z_hinf)          # the given H_ini is too low
@@ -175,7 +178,7 @@ HINFSUPINI_DIC <- function (p_alktot, p_dictot, p_bortot,
     {
         if (p_hini[1] == pp_hnan) {      # request to calculate H_ini
 
-            if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
+            if (DEBUG_PHSOLVERS)
             {
                 print ('[HINFSUPINI] using hini_ACB_DIC to set H_ini')
             }
@@ -301,7 +304,7 @@ HINFSUPINI_CO2 <- function (p_alktot, p_co2,   p_bortot,
     z_hsup = z_hcmin + sqrt(-(za0 + z_hcmin*(za1 + z_hcmin*(za2 + z_hcmin*za3)))/zsqrtd)
 
 
-    if (exists("SAFEGEOMEAN_INIT") && SAFEGEOMEAN_INIT)
+    if (SAFEGEOMEAN_INIT)
     {
 
         if (   (p_hini[1] == pp_hnan)           # request to calculate H_ini
@@ -315,7 +318,7 @@ HINFSUPINI_CO2 <- function (p_alktot, p_co2,   p_bortot,
     {
         if (p_hini[1] == pp_hnan) {      # request to calculate H_ini
 
-            if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
+            if (DEBUG_PHSOLVERS)
             {
                 print ('[HINFSUPINI] using hini_ACB_CO2 to set H_ini')
             }
@@ -414,7 +417,7 @@ HINFSUPINI_HCO3 <- function (p_alktot, p_hco3, p_bortot,
         z_hsup =     api$aphscale * (-za1 + sqrt(zd) ) / 2.
     }
 
-    if (exists("SAFEGEOMEAN_INIT") && SAFEGEOMEAN_INIT)
+    if (SAFEGEOMEAN_INIT)
     {
 
         if (   (p_hini[1] == pp_hnan)           # request to calculate H_ini
@@ -428,7 +431,7 @@ HINFSUPINI_HCO3 <- function (p_alktot, p_hco3, p_bortot,
     {
         if (p_hini[1] == pp_hnan) {      # request to calculate H_ini
 
-            if (exists("DEBUG_PHSOLVERS") && DEBUG_PHSOLVERS)
+            if (DEBUG_PHSOLVERS)
             {
                 print ('[HINFSUPINI] using hini_ACBW_HCO3 to set H_ini')
             }
@@ -488,8 +491,6 @@ HINFSUPINI_CO3 <- function (p_alktot, p_co3,   p_bortot,
     #  p_hini         :  Initial value of pH (optionnal), 2 element long array
 
     #-------------------------------------------------------------------------------
-
-
 
     z_dictot = 0.
 
@@ -683,7 +684,7 @@ HINFSUPINI_CO3 <- function (p_alktot, p_co3,   p_bortot,
                       p_po4tot, p_siltot, p_nh4tot, p_h2stot, p_so4tot, p_flutot, 4, api)
 
             # Use Brent algorithm to find the minimum of f(z_h)
-            xmin <- optimize(f, c(z_hmin, z_hsup2), tol = z_tol)
+            xmin <- stats::optimize(f, c(z_hmin, z_hsup2), tol = z_tol)
             z_htan = xmin$minimum
             z_atan = xmin$objective
      
@@ -780,7 +781,7 @@ HINFSUPINI_CO3 <- function (p_alktot, p_co3,   p_bortot,
     z_hsup = c(z_hsup1, z_hsup2)
 
 
-    if (exists("SAFEGEOMEAN_INIT") && SAFEGEOMEAN_INIT)
+    if (SAFEGEOMEAN_INIT)
     {
         if (   (p_hini[1] == pp_hnan)           # request to calculate H_ini
             || (p_hini[1] < z_hinf1)             # the given H_ini is too low
