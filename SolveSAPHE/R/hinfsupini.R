@@ -1,3 +1,23 @@
+#
+#    Copyright  2013, 2014, 2020, 2021 Guy Munhoven
+#
+#    This file is part of SolveSAPHE v. 2
+
+#    SolveSAPHE is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    SolveSAPHE is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with SolveSAPHE.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 
 # General option
 SAFEGEOMEAN_INIT = FALSE
@@ -681,7 +701,7 @@ HINFSUPINI_CO3 <- function (p_alktot, p_co3,   p_bortot,
 
             # z_atan = ALK_TAN(z_hmin, z_hsup2, z_tol, z_htan)
             f <- function (z_h) equation_at (0., z_h, p_co3, p_bortot, 
-                      p_po4tot, p_siltot, p_nh4tot, p_h2stot, p_so4tot, p_flutot, 4, api)
+                      p_po4tot, p_siltot, p_nh4tot, p_h2stot, p_so4tot, p_flutot, "CO3", api)
 
             # Use Brent algorithm to find the minimum of f(z_h)
             xmin <- stats::optimize(f, c(z_hmin, z_hsup2), tol = z_tol)

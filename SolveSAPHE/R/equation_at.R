@@ -1,3 +1,23 @@
+#
+#    Copyright  2013, 2014, 2020, 2021 Guy Munhoven
+#
+#    This file is part of SolveSAPHE v. 2
+
+#    SolveSAPHE is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    SolveSAPHE is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with SolveSAPHE.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 #===============================================================================
 equation_at <- function (p_alktot, p_h,       p_dicvar, p_bortot,
                          p_po4tot, p_siltot,  p_nh4tot, p_h2stot,
@@ -34,7 +54,7 @@ equation_at <- function (p_alktot, p_h,       p_dicvar, p_bortot,
 
     result =   ANW(p_h, p_dicvar, p_bortot, p_po4tot, p_siltot,
                     p_nh4tot, p_h2stot, p_so4tot, p_flutot,
-                    p_dicsel = p_dicsel, api, p_deriv)
+                    p_dicsel, api, p_deriv)
                             
     z_anw = result[1]
     zdiffalk = z_anw + zalk_wat - p_alktot

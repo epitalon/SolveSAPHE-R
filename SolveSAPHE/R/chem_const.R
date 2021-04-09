@@ -1,4 +1,4 @@
-﻿    #
+#
 #    Copyright  2013, 2014, 2020, 2021 Guy Munhoven
 #
 #    This file is part of SolveSAPHE v. 2
@@ -89,6 +89,8 @@ compute_dissoc_constants <- function (p_temp, p_sal, p_pres, p_pHscale="T")
 # K_HSO4  :  Dissociation constant of hydrogen sulfate (mol/kg) on free scale
 # K_HF    :  Dissociation constant of hydrogen fluoride (mol/kg) on free scale
 # K_H2O   :  Dissociation constant of water (mol/kg) on chosen scale
+#
+# Note :  K2_Sil, second dissociation constant of sillicic acid is not computed.
 {
     t_k = p_temp + t_k_zerodegc
     
@@ -1896,7 +1898,5 @@ CHECKCONSTANTS <- function()
     print (c('   pK_NH4         :', -log10(zknh4)))
     print ('')
 
-
-
-    return
+    return()
 }

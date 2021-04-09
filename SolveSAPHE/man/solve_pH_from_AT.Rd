@@ -33,7 +33,9 @@ See below parameter p_dicsel}
 "CO3"   :   p_dicvar = [CO3--]}
 
 	\item{p_askVal}{Optional boolean - set to TRUE if you want this function to return error on alkalinity, along with [H+] concentration value. Default is FALSE}
-	\item{p_dissoc}{Named list of all dissociation constants (optional). Member names are :
+	\item{p_dissoc}{Named list of all dissociation constants. 
+The list is optional but, if given, it should contain all members listed below excepted K2_Sil, which is itself optional. 
+Member names are :
 
 K1_DIC  :  First dissociation constant of carbonic acid (mol/kg) on chosen scale
 
@@ -47,7 +49,11 @@ K2_PO4  :  Second dissociation constant of phosphoric acid (mol/kg) on chosen sc
 
 K3_PO4  :  third dissociation constant of phosphoric acid (mol/kg) on chosen scale
 
-K_Sil   :  Dissociation constant of sillicic acid (mol/kg) on chosen scale
+K_Sil   :  First dissociation constant of sillicic acid (mol/kg) on chosen scale
+
+K2_Sil  :  Second dissociation constant of sillicic acid (mol/kg) on chosen scale. It is optional.
+If K2_Sil is absent from the list, then SiO2(OH)2 ion is not considered in the alkalinity equation.
+Only SiO(OH)3 ion is.
 
 K_NH4   :  Dissociation constant of ammonium (mol/kg) on chosen scale
 
@@ -61,7 +67,7 @@ K_H2O   :  Dissociation constant of water (mol/kg) on chosen scale
 
 Note that all dissociation constants shall be expressed in chosen pH scale except K_HF and K_HSO4 which shall be in free scale.
 
-If not given, these constants will be calculated.}
+If the list is not given, these constants, excepted K2_Sil, will be calculated.}
 
 	\item{p_temp}{Temperature in degree Celsius, to compute dissociation constants when p_dissoc is not given}
 	\item{p_sal}{Salinity, in pratical salinty unit (psu), to compute dissociation constants when p_dissoc is not given}

@@ -1,3 +1,23 @@
+#
+#    Copyright  2013, 2014, 2020, 2021 Guy Munhoven
+#
+#    This file is part of SolveSAPHE v. 2
+
+#    SolveSAPHE is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    SolveSAPHE is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with SolveSAPHE.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 
 # General option for Debugging
 DEBUG_PHSOLVERS = FALSE
@@ -29,8 +49,8 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
     # -----------------------------------------------------------------------
     
     
-    i_dicsel = factor(toupper(p_dicsel), c("DIC", "CO2", "HCO3", "CO3"))
-    if (is.na(i_dicsel))
+    valid_dicsel = is.element (toupper(p_dicsel), c("DIC", "CO2", "HCO3", "CO3"))
+    if (! valid_dicsel)
         stop("Invalid parameter p_dicsel= ", p_dicsel)
     p_dicsel = toupper(p_dicsel)
     
@@ -81,6 +101,26 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
     if (missing (p_dissoc)) 
     {
         p_dissoc <- compute_dissoc_constants (p_temp, p_sal, p_pres, p_pHscale)
+        # We shall not account for second dissociation of sillicic acid
+        p_dissoc$K2_Sil <- 0.0
+    }
+    else
+    {
+        # Check content of parameter "p_dissoc"
+        required_members <- c("K1_DIC", "K2_DIC", "K_BT", "K1_PO4", "K2_PO4", "K3_PO4", "K_Sil", "K_NH4", "K_H2S", "K_H2O", "K_HSO4", "K_HF")
+        test_present_members <- required_members %in% names(p_dissoc)
+        
+        # if some required members of p_dissoc are missing
+        if (!all(test_present_members))
+        {
+            absent_members <- required_members[! test_present_members]
+            stop ("Missing members in list parameter p_dissoc: ", absent_members)
+        }
+        # if second dissociation constant for Sillicic acid is not given
+        if (! ("K2_Sil" %in% names(p_dissoc))) {
+            # We shall not account for second dissociation of sillicic acid
+            p_dissoc$K2_Sil <- 0.0
+        }
     }
 
     api = list()
@@ -112,6 +152,7 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
     api$api2_po4 <- p_dissoc$K1_PO4 * p_dissoc$K2_PO4
     api$api3_po4 <- p_dissoc$K1_PO4 * p_dissoc$K2_PO4 * p_dissoc$K3_PO4
     api$api1_sil <- p_dissoc$K_Sil
+    api$api2_sil <- p_dissoc$K_Sil * p_dissoc$K2_Sil
     api$api1_nh4 <- p_dissoc$K_NH4
     api$api1_h2s <- p_dissoc$K_H2S
     api$api1_wat <- p_dissoc$K_H2O
@@ -385,7 +426,8 @@ solve_pH_from_AT <- function (p_alktot, p_dicvar, p_bortot, p_po4tot, p_siltot,
 
     }   # end for (i_root in seq_len(k_nroots))
 
-
+    i_root = k_nroots   # already the case, except when k_nroots == 0
+    
                                         # Finally, initialize the variables
                                         # related to the non-used roots.
     while (i_root < 2) {

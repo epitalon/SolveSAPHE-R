@@ -1,3 +1,23 @@
+#
+#    Copyright  2013, 2014, 2020, 2021 Guy Munhoven
+#
+#    This file is part of SolveSAPHE v. 2
+
+#    SolveSAPHE is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    SolveSAPHE is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public License
+#    along with SolveSAPHE.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
 #===============================================================================
 ANW <- function (p_h, p_dicvar, p_bortot,
                       p_po4tot, p_siltot,
@@ -68,9 +88,10 @@ ANW <- function (p_h, p_dicvar, p_bortot,
     zdenom_po4 =       api$api3_po4 + p_h*(      api$api2_po4 + p_h*(api$api1_po4 + p_h))
     zalk_po4   = p_po4tot * (znumer_po4/zdenom_po4 - 1.) # Zero level of H3PO4 = 1
 
-    # H4SiO4 - H3SiO4 : n=1, m=0
-    znumer_sil =       api$api1_sil
-    zdenom_sil =       api$api1_sil + p_h
+    # H4SiO4 - H3SiO4 - H2SiO4 : n=2, m=0
+    # if api$api2_sil is zero, then it excludes H2SiO4, downgrading to :  H4SiO4 - H3SiO4 : n=1, m=0
+    znumer_sil = 2.*api$api2_sil + p_h*       api$api1_sil
+    zdenom_sil =    api$api2_sil + p_h*(      api$api1_sil + p_h)
     zalk_sil   = p_siltot * (znumer_sil/zdenom_sil)
 
     # NH4 - NH3 : n=1, m=0
@@ -139,9 +160,11 @@ ANW <- function (p_h, p_dicvar, p_bortot,
                                         p_h *     api$api1_po4)))
         zdalk_po4   = -p_po4tot * (zdnumer_po4/zdenom_po4^2)
 
-        # H4SiO4 - H3SiO4 : n=1
-        zdnumer_sil = api$api1_sil
-        zdalk_sil   = -p_siltot * (zdnumer_sil/zdenom_sil^2)
+        # H4SiO4 - H3SiO4 - H2SiO4 : n=2, m=0
+        # if api$api2_sil is zero, then H2SiO4 does not account, downgrading to :  H4SiO4 - H3SiO4 : n=1, m=0
+        zdnumer_sil = api$api1_sil*api$api2_sil 
+            + p_h*(4.*api$api2_sil + p_h*       api$api1_sil)
+        zdalk_sil   = -p_siltot*(zdnumer_sil/zdenom_sil^2)
 
         # NH4 - NH3 : n=1
         zdnumer_nh4 = api$api1_nh4

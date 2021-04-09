@@ -21,5 +21,5 @@ Briefly, after installing R and if you have an Internet connection, here is the 
 
 The solveSAPHE package can be downloaded from the Comprehensive R Archive Network (CRAN; see link below). The documentation is included in the package and is accessible using standard R commands. Please give due credit to the publications mentioned above and cite solveSAPHE as follows:
 
-Munhoven G., Epitalon J.-M. solveSAPHE: SOLVEr Suite for Alkalinity-PH Equations. R package version 1.0.0. http://CRAN.R-project.org/package=solveSAPHE
+Munhoven G., Epitalon J.-M. solveSAPHE: SOLVEr Suite for Alkalinity-PH Equations. R package version 2.1.0. http://CRAN.R-project.org/package=solveSAPHE
 
