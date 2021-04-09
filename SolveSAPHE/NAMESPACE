@@ -2,3 +2,8 @@ importFrom(utils, data)
 importFrom("stats", "optimize")
 # Export main function
 export("solve_pH_from_AT")
+# Export functions from chem_const.R
+export("ACVT_HSWS_O_HFREE", "ACVT_HTOT_O_HFREE")
+export("AK_AMMO_1_YAMI95", "AK_BORA_DICK90", "AK_CARB_0_WEIS74", "AK_CARB_1_LUEK00", "AK_CARB_1_MILL95", "AK_CARB_1_ROYE93")
+export("AK_CARB_2_LUEK00", "AK_CARB_2_MILL95", "AK_CARB_2_ROYE93", "AK_H2S_1_MILL95", "AK_HF_PEFR87", "AK_HSO4_DICK90")
+export("AK_PHOS_1_MILL95", "AK_PHOS_2_MILL95", "AK_PHOS_3_MILL95", "AK_SILI_1_MILL95", "AK_W_MILL95")
